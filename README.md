@@ -50,7 +50,21 @@ INSERT INTO availability (id, booked_dates)
 VALUES (1, ARRAY['2026-07-25', '2026-07-26']);
 ```
 
-You should see "Success. No rows returned" at the bottom.
+4. In the same SQL Editor, run this block to create the gallery table (stores the site's photos):
+
+```sql
+CREATE TABLE gallery_photos (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  url text NOT NULL,
+  title text NOT NULL DEFAULT '',
+  sort_order int NOT NULL DEFAULT 0,
+  created_at timestamptz NOT NULL DEFAULT now()
+);
+```
+
+You should see "Success. No rows returned" after each block.
+
+> The photo files themselves are stored in a Supabase Storage bucket named `gallery`. It is created automatically the first time the owner uploads a photo.
 
 ---
 

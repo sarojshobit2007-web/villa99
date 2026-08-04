@@ -1,6 +1,7 @@
 import express from 'express';
 import bcrypt from 'bcryptjs';
 import cookieParser from 'cookie-parser';
+import multer from 'multer';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -16,11 +17,26 @@ import {
 } from './middleware/auth.js';
 import { logSecurityEvent } from './securityLogger.js';
 import { readAvailability, writeAvailability } from './storage.js';
+import {
+  DEFAULT_GALLERY_FALLBACK,
+  GalleryNotConfiguredError,
+  deleteGalleryPhoto,
+  ensureGalleryBucket,
+  listGalleryPhotos,
+  uploadGalleryPhoto,
+} from './gallery.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const MAX_BOOKED_DATES = 2000;
+
+const MAX_IMAGE_BYTES = 4 * 1024 * 1024;
+
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: MAX_IMAGE_BYTES },
+});
 
 function isValidCalendarDate(dateStr) {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return false;
@@ -139,6 +155,60 @@ async function buildApp() {
         console.error('Error writing availability:', err.message);
         logSecurityEvent('availability_update_failed', { ip: req.ip, error: 'internal_error' });
         res.status(500).json({ error: 'Failed to update availability' });
+      }
+    }
+  );
+
+  app.get('/api/gallery', async (_req, res) => {
+    try {
+      const photos = await listGalleryPhotos();
+      res.json({ photos });
+    } catch (err) {
+      if (err instanceof GalleryNotConfiguredError) {
+        return res.json({ photos: DEFAULT_GALLERY_FALLBACK });
+      }
+      console.error('Error reading gallery:', err.message);
+      res.status(500).json({ error: 'Failed to read gallery' });
+    }
+  });
+
+  app.post(
+    '/api/gallery',
+    authenticateToken,
+    doubleCsrfProtection,
+    upload.single('photo'),
+    async (req, res) => {
+      if (!req.file) {
+        return res.status(400).json({ error: 'No photo uploaded' });
+      }
+      const title = typeof req.body?.title === 'string' ? req.body.title.trim().slice(0, 80) : '';
+      try {
+        await ensureGalleryBucket();
+        const photo = await uploadGalleryPhoto(req.file.buffer, req.file.mimetype, title);
+        logSecurityEvent('gallery_photo_uploaded', { ip: req.ip, title: photo.title });
+        res.status(201).json({ photo });
+      } catch (err) {
+        console.error('Error uploading gallery photo:', err.message);
+        res.status(400).json({ error: err.message || 'Failed to upload photo' });
+      }
+    }
+  );
+
+  app.delete(
+    '/api/gallery/:id',
+    authenticateToken,
+    doubleCsrfProtection,
+    async (req, res) => {
+      if (!req.params?.id) {
+        return res.status(400).json({ error: 'Invalid photo id' });
+      }
+      try {
+        await deleteGalleryPhoto(req.params.id);
+        logSecurityEvent('gallery_photo_deleted', { ip: req.ip, id: req.params.id });
+        res.json({ success: true });
+      } catch (err) {
+        console.error('Error deleting gallery photo:', err.message);
+        res.status(500).json({ error: 'Failed to delete photo' });
       }
     }
   );

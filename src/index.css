@@ -997,3 +997,210 @@ body {
   color: #ef4444;
 }
 
+/* ── Owner Tabs ── */
+.owner-tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+  border-bottom: 1px solid rgba(201, 167, 74, 0.15);
+}
+
+.owner-tab {
+  padding: 0.75rem 1.5rem;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--color-ash);
+  font-family: var(--font-body);
+  font-size: 0.6rem;
+  font-weight: 500;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.owner-tab:hover {
+  color: var(--color-warm-white);
+}
+
+.owner-tab-active {
+  color: var(--color-champagne);
+  border-bottom-color: var(--color-champagne);
+}
+
+/* ── Owner Gallery ── */
+.owner-gallery-upload {
+  padding: clamp(1.5rem, 3vw, 2.5rem);
+  margin-bottom: 2rem;
+}
+
+.owner-gallery-upload-fields {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .owner-gallery-upload-fields {
+    grid-template-columns: 1fr 2fr;
+  }
+}
+
+.owner-gallery-label {
+  display: block;
+  font-family: var(--font-body);
+  font-size: 0.55rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--color-ash);
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+.owner-gallery-file {
+  display: block;
+  width: 100%;
+  padding: 0.75rem;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: var(--color-warm-white);
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+}
+
+.owner-gallery-file::file-selector-button {
+  padding: 0.5rem 1rem;
+  margin-right: 1rem;
+  background: rgba(201, 167, 74, 0.12);
+  border: 1px solid rgba(201, 167, 74, 0.3);
+  color: var(--color-champagne);
+  font-family: var(--font-body);
+  font-size: 0.6rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.owner-gallery-file::file-selector-button:hover {
+  background: rgba(201, 167, 74, 0.2);
+}
+
+.owner-gallery-empty {
+  padding: 3rem 1.5rem;
+  text-align: center;
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  color: var(--color-ash);
+  border: 1px dashed rgba(201, 167, 74, 0.25);
+}
+
+.owner-gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1.25rem;
+}
+
+.owner-gallery-item {
+  border: 1px solid rgba(201, 167, 74, 0.15);
+  background: rgba(255, 255, 255, 0.02);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.owner-gallery-thumb {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  display: block;
+}
+
+.owner-gallery-item-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+}
+
+.owner-gallery-item-title {
+  font-family: var(--font-heading);
+  font-size: 0.85rem;
+  color: var(--color-warm-white);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.owner-gallery-delete {
+  flex-shrink: 0;
+  padding: 0.35rem 0.75rem;
+  background: transparent;
+  border: 1px solid rgba(239, 68, 68, 0.25);
+  color: #ef4444;
+  font-family: var(--font-body);
+  font-size: 0.5rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.owner-gallery-delete:hover:not(:disabled) {
+  background: rgba(239, 68, 68, 0.08);
+  border-color: rgba(239, 68, 68, 0.5);
+}
+
+.owner-gallery-delete:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.owner-gallery-confirm {
+  display: flex;
+  gap: 0.4rem;
+  flex-shrink: 0;
+}
+
+.owner-gallery-confirm-yes,
+.owner-gallery-confirm-no {
+  padding: 0.35rem 0.6rem;
+  font-family: var(--font-body);
+  font-size: 0.5rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.owner-gallery-confirm-yes {
+  background: #ef4444;
+  border: 1px solid #ef4444;
+  color: #fff;
+}
+
+.owner-gallery-confirm-yes:hover:not(:disabled) {
+  background: #dc2626;
+}
+
+.owner-gallery-confirm-no {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: var(--color-ash);
+}
+
+.owner-gallery-confirm-no:hover:not(:disabled) {
+  color: var(--color-warm-white);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.owner-gallery-confirm-yes:disabled,
+.owner-gallery-confirm-no:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+

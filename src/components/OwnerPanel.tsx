@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { fetchAvailability as loadAvailability, saveAvailability, logoutOwner } from '../lib/ownerApi';
+import OwnerGalleryManager from './OwnerGalleryManager';
 
 interface OwnerPanelProps {
   onLogout: () => void;
@@ -22,6 +23,7 @@ export default function OwnerPanel({ onLogout }: OwnerPanelProps) {
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
   const [rangeStart, setRangeStart] = useState<string | null>(null);
   const [hasChanges, setHasChanges] = useState(false);
+  const [tab, setTab] = useState<'availability' | 'photos'>('availability');
 
   // Load initial data
   const fetchAvailability = useCallback(async () => {
@@ -260,6 +262,26 @@ export default function OwnerPanel({ onLogout }: OwnerPanelProps) {
       {/* Main Content */}
       <main className="owner-main">
         <div className="owner-content">
+          {/* Tabs */}
+          <div className="owner-tabs">
+            <button
+              onClick={() => setTab('availability')}
+              className={`owner-tab ${tab === 'availability' ? 'owner-tab-active' : ''}`}
+            >
+              Availability
+            </button>
+            <button
+              onClick={() => setTab('photos')}
+              className={`owner-tab ${tab === 'photos' ? 'owner-tab-active' : ''}`}
+            >
+              Photos
+            </button>
+          </div>
+
+          {tab === 'photos' ? (
+            <OwnerGalleryManager onLogout={onLogout} />
+          ) : (
+          <>
           {/* Instructions */}
           <div className="owner-instructions">
             <p>Click dates to select them, then mark as booked or available. Use <strong>Shift + Click</strong> to select a range.</p>
@@ -447,6 +469,8 @@ export default function OwnerPanel({ onLogout }: OwnerPanelProps) {
               )}
             </div>
           </div>
+          </>
+          )}
         </div>
       </main>
     </div>
